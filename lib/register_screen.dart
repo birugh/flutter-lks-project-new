@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lks_project_new/login_screen.dart';
 
 class RegisterScreenStateful extends StatefulWidget {
   const RegisterScreenStateful({super.key});
@@ -110,6 +111,7 @@ Widget FormPage(BuildContext context) {
               TextButton(
                 onPressed: () {
                   //
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginScreenStateful()));
                 },
                 child: Text('Sudah punya akun? Daftar di sini!'),
               ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:lks_project_new/profile_screen.dart';
 import 'package:lks_project_new/register_screen.dart';
 
 class LoginScreenStateful extends StatefulWidget {
@@ -67,6 +68,7 @@ class _LoginScreenStatefulState extends State<LoginScreenStateful> {
                     child: ElevatedButton(
                       onPressed: () {
                         // asad
+              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ProfileScreenPage()));
                       },
                       child: Text('Login'),
                     ),

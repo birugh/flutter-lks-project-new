@@ -4,7 +4,12 @@ import 'package:lks_project_new/profile_screen.dart';
 
 class NavigationBarStateful extends StatefulWidget {
   final int initialIndex;
-  const NavigationBarStateful({super.key, this.initialIndex = 0});
+  final token;
+  const NavigationBarStateful({
+    super.key,
+    this.initialIndex = 0,
+    required this.token,
+  });
 
   @override
   State<NavigationBarStateful> createState() => _NavigationBarStatefulState();
@@ -39,12 +44,16 @@ class _NavigationBarStatefulState extends State<NavigationBarStateful> {
         if (value == 0) {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => ListProductStateful()),
+            MaterialPageRoute(
+              builder: (context) => ListProductStateful(token: widget.token),
+            ),
           );
         } else if (value == 1) {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => ProfileScreenPage()),
+            MaterialPageRoute(
+              builder: (context) => ProfileScreenPage(token: widget.token),
+            ),
           );
         }
       },

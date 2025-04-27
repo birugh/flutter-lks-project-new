@@ -17,6 +17,7 @@ class _LoginScreenStatefulState extends State<LoginScreenStateful> {
   final _formKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
+  var _errorMessage;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,6 +67,10 @@ class _LoginScreenStatefulState extends State<LoginScreenStateful> {
                         return null;
                       },
                     ),
+                  ),
+                  SizedBox(height: 15),
+                  Container(
+                    child: Text(_errorMessage ?? ''),
                   ),
                   SizedBox(height: 15),
                   SizedBox(

@@ -3,7 +3,20 @@ import 'package:lks_project_new/login_screen.dart';
 import 'package:lks_project_new/navigation_bar.dart';
 
 class ProfileScreenPage extends StatefulWidget {
-  const ProfileScreenPage({super.key});
+  final String token;
+  final String? foto;
+  final String? namaLengkap;
+  final String? phone;
+  final String? alamat;
+
+  const ProfileScreenPage({
+    super.key,
+    required this.token,
+    this.foto,
+    this.namaLengkap,
+    this.phone,
+    this.alamat,
+  });
 
   @override
   State<ProfileScreenPage> createState() => _ProfileScreenPageState();
@@ -18,11 +31,14 @@ class _ProfileScreenPageState extends State<ProfileScreenPage> {
           children: [
             SizedBox(height: 50),
             HeaderApp(context),
-            UserProfileScreen(context),
+            UserProfileScreen(context, widget.namaLengkap, widget.phone, widget.alamat),
           ],
         ),
       ),
-      bottomNavigationBar: NavigationBarStateful(initialIndex: 1,),
+      bottomNavigationBar: NavigationBarStateful(
+        initialIndex: 1,
+        token: widget.token,
+      ),
     );
   }
 }
@@ -60,7 +76,7 @@ Widget HeaderApp(BuildContext context) {
   );
 }
 
-Widget UserProfileScreen(BuildContext context) {
+Widget UserProfileScreen(BuildContext context, String? namaLengkap, String? phone, String? alamat) {
   return Container(
     height: 150,
     decoration: BoxDecoration(color: const Color(0xFFd0f4f5)),
@@ -88,7 +104,7 @@ Widget UserProfileScreen(BuildContext context) {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Biru',
+                namaLengkap ?? 'No Name',
                 style: TextStyle(
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
@@ -96,11 +112,11 @@ Widget UserProfileScreen(BuildContext context) {
                 ),
               ),
               Text(
-                'No Telepon',
+                phone ?? 'No Telepon',
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
               ),
               Text(
-                'Alamat',
+                alamat ?? 'Alamat',
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
               ),
             ],

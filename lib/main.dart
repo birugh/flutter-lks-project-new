@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lks_project_new/login_screen.dart';
+import 'package:lks_project_new/profile_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue)   ,
         useMaterial3: true
       ),
-      home: const LoginScreenStateful(),
+      home: const ProfileScreenPage(),
     );
   }
 }

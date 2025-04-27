@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lks_project_new/profile_screen.dart';
@@ -11,6 +14,7 @@ class LoginScreenStateful extends StatefulWidget {
 }
 
 class _LoginScreenStatefulState extends State<LoginScreenStateful> {
+  final _formKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   @override
@@ -20,6 +24,7 @@ class _LoginScreenStatefulState extends State<LoginScreenStateful> {
         child: Container(
           child: SingleChildScrollView(
             child: Form(
+              key: _formKey,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -68,7 +73,7 @@ class _LoginScreenStatefulState extends State<LoginScreenStateful> {
                     child: ElevatedButton(
                       onPressed: () {
                         // asad
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ProfileScreenPage()));
+                        LoginLogic();
                       },
                       child: Text('Login'),
                     ),
@@ -91,6 +96,56 @@ class _LoginScreenStatefulState extends State<LoginScreenStateful> {
         ),
       ),
     );
+  }
+
+  Future<dynamic> LoginLogic() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    var headers = {'Accept': 'application/json'};
+    var data = FormData.fromMap({
+      'username': _usernameController.text,
+      'password': _passwordController.text,
+    });
+
+    var dio = Dio();
+    try {
+      var response = await dio.request(
+        'http://flaminggo.my.id/api/login',
+        options: Options(method: 'POST', headers: headers),
+        data: data,
+      );
+
+      if (response.statusCode == 200) {
+        String token = response.data['token'] ?? '';
+        String foto = response.data['mu_photo'] ?? '';
+        String namaLengkap = response.data['user_data']['mu_fullname'] ?? '';
+        String phone = response.data['user_data']['mu_phone'] ?? '';
+        String alamat = response.data['user_data']['mu_alamat'] ?? '';
+        print(json.encode(response.data));
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder:
+                (context) => ProfileScreenPage(
+                  token: token,
+                  foto: foto,
+                  namaLengkap: namaLengkap,
+                  phone: phone,
+                  alamat: alamat,
+                ),
+          ),
+        );
+      } else {
+        print(response.data['error']);
+      }
+    } on DioException catch (e) {
+      print('Dio error: ${e.message}');
+      if (e.response != null) {
+        print('Response data: ${e.response?.data}');
+      }
+    } catch (e) {
+      print('Unexpected error: $e');
+    }
   }
 
   Widget HeaderApp(BuildContext context) {

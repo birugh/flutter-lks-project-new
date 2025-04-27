@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:lks_project_new/Invoice.dart';
 import 'package:lks_project_new/navigation_bar.dart';
 
 class ListProductStateful extends StatefulWidget {
@@ -35,7 +36,9 @@ class _ListProductStatefulState extends State<ListProductStateful> {
           SubHeader(context),
           ListViewProduct(context, products),
           // Products(context),
-          ElevatedButton(onPressed: GetDataList, child: Text('Debug'))
+          ElevatedButton(onPressed: () {
+            // 
+          }, child: Text('Debug'))
         ],
       ),
       bottomNavigationBar: NavigationBarStateful(initialIndex: 0, token: widget.token),
@@ -198,6 +201,12 @@ Widget Products(BuildContext context, Map<String, dynamic> product) {
                         child: IconButton(
                           onPressed: () {
                             // TODO: Implement add to cart
+                            Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => InvoiceScreen(token: widget.token, product: ,),
+            ),
+          );
                           },
                           icon: Icon(
                             Icons.shopping_cart_rounded,

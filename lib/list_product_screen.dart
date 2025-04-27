@@ -33,8 +33,9 @@ class _ListProductStatefulState extends State<ListProductStateful> {
           SizedBox(height: 50),
           HeaderApp(context),
           SubHeader(context),
-          ListViewProduct(context),
+          ListViewProduct(context, products),
           // Products(context),
+          ElevatedButton(onPressed: GetDataList, child: Text('Debug'))
         ],
       ),
       bottomNavigationBar: NavigationBarStateful(initialIndex: 0, token: widget.token),
@@ -42,43 +43,57 @@ class _ListProductStatefulState extends State<ListProductStateful> {
   }
 
   Future<void> GetDataList() async {
-    var headers = {
-      'Authorization':
-          'Bearer ${widget.token}',
-    };
-    var data = {};
-    var dio = Dio();
-    var response = await dio.request(
-      'https://flaminggo.my.id/api/products',
-      options: Options(method: 'GET', headers: headers),
-      data: data,
-    );
-
-    if (response.data != null &&
-        response.data['data'] != null &&
-        response.data['data']['data'] != null) {
-      dataBaru = response.data['data']['data'];
-      dummyData = dataBaru;
-      products = dataBaru;
-      setState(() {});
-    } else {
-      print(response.statusMessage);
+    try {
+      var headers = {
+        'Authorization': 'Bearer ${widget.token}',
+      };
+      var data = {};
+      var dio = Dio();
+      var response = await dio.request(
+        'https://flaminggo.my.id/api/products',
+        options: Options(
+          method: 'GET',
+          headers: headers,
+        ),
+        data: data,
+      );
+      print(response.data);
+      if (response.data != null &&
+          response.data['data'] != null &&
+          response.data['data']['data'] != null) {
+        dataBaru = response.data['data']['data'];
+        dummyData = List.from(dataBaru);
+        products = List.from(dataBaru);
+        setState(() {});
+      } else {
+        print(response.statusMessage);
+      }
+    } catch (e) {
+      print(e);
     }
   }
 }
 
-Widget ListViewProduct(BuildContext context) {
-  return Expanded(child: ListView.builder(
-    itemCount: 4,
-    itemBuilder: (context, index) {
-      return ListTile(
-        
-      );
-    },
-  ));
+Widget ListViewProduct(BuildContext context, List<dynamic> products) {
+  return Expanded(
+    child: ListView.builder(
+      itemCount: products.length,
+      itemBuilder: (context, index) {
+        var product = products[index];
+        return Products(context, product);
+      },
+    ),
+  );
 }
 
-Widget Products(BuildContext context) {
+Widget Products(BuildContext context, Map<String, dynamic> product) {
+  String imageUrl = product['mp_photo'] != null
+      ? 'https://flaminggo.my.id/${product['mp_photo']}'
+      : '';
+  String name = product['mp_name'] ?? 'No Name';
+  String price = product['mp_price'] != null ? 'Rp. ${product['mp_price']}' : 'No Price';
+  String rate = product['mp_rate'] != null ? product['mp_rate'].toString() : '0';
+
   return Container(
     child: Card(
       child: Padding(
@@ -86,96 +101,115 @@ Widget Products(BuildContext context) {
         child: Row(
           children: [
             SizedBox(width: 10),
-            Image.asset(
-              '',
-              errorBuilder: (context, error, stackTrace) {
-                return SizedBox(
-                  child: Icon(Icons.image, color: Colors.grey, size: 50),
-                );
-              },
-            ),
-            SizedBox(width: 10),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      'Fanta Orange',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.black,
-                      ),
-                    ),
-                    SizedBox(width: 180),
-                    Icon(Icons.star, size: 14, color: Color(0xFFfede2e)),
-                    Text(
-                      '4.9',
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ],
-                ),
-                Text(
-                  'Rp. 7.000',
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black,
+            imageUrl.isNotEmpty
+                ? Image.network(
+                    imageUrl,
+                    width: 70,
+                    height: 70,
+                    errorBuilder: (context, error, stackTrace) {
+                      return SizedBox(
+                        width: 70,
+                        height: 70,
+                        child: Icon(Icons.image, color: Colors.grey, size: 50),
+                      );
+                    },
+                  )
+                : SizedBox(
+                    width: 70,
+                    height: 70,
+                    child: Icon(Icons.image, color: Colors.grey, size: 50),
                   ),
-                ),
-                Row(
-                  children: [
-                    IconButton(
-                      onPressed: () {
-                        //
-                      },
-                      icon: Icon(
-                        Icons.remove_circle,
-                        size: 20,
-                        color: Color(0xFF747474),
+            SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          name,
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
+                      Icon(Icons.star, size: 14, color: Color(0xFFfede2e)),
+                      SizedBox(width: 4),
+                      Text(
+                        rate,
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Text(
+                    price,
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black,
                     ),
-                    Text(
-                      '0',
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.black,
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: () {
-                        //
-                      },
-                      icon: Icon(
-                        Icons.add_circle,
-                        size: 20,
-                        color: Color(0xFF747474),
-                      ),
-                    ),
-                    SizedBox(width: 160),
-                    Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: Color(0xFF88c8fd),
-                        borderRadius: BorderRadius.all(Radius.circular(5))
-                      ),
-                      child: IconButton(
+                  ),
+                  Row(
+                    children: [
+                      IconButton(
                         onPressed: () {
-                          //
+                          // TODO: Implement decrement quantity
                         },
-                        icon: Icon(Icons.shopping_cart_rounded, size: 20, color: Colors.white,),
+                        icon: Icon(
+                          Icons.remove_circle,
+                          size: 20,
+                          color: Color(0xFF747474),
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                      Text(
+                        '0', // TODO: Replace with actual quantity
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black,
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          // TODO: Implement increment quantity
+                        },
+                        icon: Icon(
+                          Icons.add_circle,
+                          size: 20,
+                          color: Color(0xFF747474),
+                        ),
+                      ),
+                      Spacer(),
+                      Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: Color(0xFF88c8fd),
+                          borderRadius: BorderRadius.all(Radius.circular(5)),
+                        ),
+                        child: IconButton(
+                          onPressed: () {
+                            // TODO: Implement add to cart
+                          },
+                          icon: Icon(
+                            Icons.shopping_cart_rounded,
+                            size: 20,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ],
         ),
